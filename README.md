@@ -58,53 +58,51 @@ restricted to Lorentzian lines shapes.
     
     > You can also try to fit the data without adjusting any parameters. Simply click 
     > **Fit**. In this example no alteration of the start parameters was necessary.
-    
-<img src='examples\start-mod.png' alt='Start'>
+       
+<img src='examples\start-mod.png' alt='Start' width=600 align='center'>    
 
 3. The result of the fit is displayed in the lower area, parameters and statistics are 
    also displayed in the terminal (console, cmd, std.out). Check if the results are okay. 
    Otherwise adjust the **sliders**  and click the **Fit button** again.
-   
-<img src='examples\fit.png' alt='Fit'>
-    
-    Terminal output:
-   
-    ```
-    # Fit report for example_data
-    ## File statistics:
-    MB data     : example_data.dat
-    data points : 256
-    variables   : 9
-    
-    χ²          : 8.3411e-05
-    red. χ²     : 3.3770e-07
-    R²          : 0.9952
-
-    ## Fit results:
-    data in 1σ  : 30
-    data in 3σ  : 101
-    y0          : 0.9995±0.0001
-    
-    |   species |    δ /mm·s⁻¹ |   ΔEQ /mm·s⁻¹ |   fwhm /mm·s⁻¹ |   r (area)/% |   r (int)/% |
-    |-----------|--------------|---------------|----------------|--------------|-------------|
-    |      L1Fe |  0.669±0.016 |   1.637±0.026 |    0.877±0.049 |   20.26±0.93 |       19.85 |
-    |      L2Fe | -0.170±0.002 |   2.240±0.003 |    0.519±0.006 |   79.74±0.93 |       80.15 |
-    ```
-
-4. Finally save the results by clicking on the **Save** button. The optimized parameters 
-   will be saved in `mb-param-fit.txt`. A fit report in `example_data-report.txt` 
-   (essentially the same as the last console output), raw data and the fitted curves in
-   `example_data-fit.dat` (a file which you can open in Gnuplot, Excel or Origin 
-   for example) and the content of the lower plot area in `example_data-fit.png`. 
-   
+   <img src='examples\fit.png' alt='Fit' width=600 align='center'>    
    Terminal output:
    
-    ```
-    mb-param-fit.txt saved.
-    example_data-report.txt saved.
-    example_data-fit.dat saved.
-    example_data-fit.png saved.
-    ```
+   ```
+   # Fit report for example_data
+   ## File statistics:
+   MB data     : example_data.dat
+   data points : 256
+   variables   : 9
+   
+   χ²          : 8.3411e-05
+   red. χ²     : 3.3770e-07
+   R²          : 0.9952
+
+   ## Fit results:
+   data in 1σ  : 30
+   data in 3σ  : 101
+   y0          : 0.9995±0.0001
+   
+   |   species |    δ /mm·s⁻¹ |   ΔEQ /mm·s⁻¹ |   fwhm /mm·s⁻¹ |   r (area)/% |   r (int)/% |
+   |-----------|--------------|---------------|----------------|--------------|-------------|
+   |      L1Fe |  0.669±0.016 |   1.637±0.026 |    0.877±0.049 |   20.26±0.93 |       19.85 |
+   |      L2Fe | -0.170±0.002 |   2.240±0.003 |    0.519±0.006 |   79.74±0.93 |       80.15 |
+   ```
+
+4. Finally save the results by clicking on the **Save** button. The optimized parameters 
+   will be saved in `mb-param-fit.txt`, a fit report in `example_data-report.txt` 
+   (same as the last console output), raw data and the fitted curves in
+   `example_data-fit.dat` (a file which you can open in Gnuplot, Excel or Origin 
+   for example) and the content of the lower plot area in `example_data-fit.png`.
+<img src='examples\fit.png' alt='Fit' width=600 align='center'>    
+   Terminal output:
+   
+   ```
+   mb-param-fit.txt saved.
+   example_data-report.txt saved.
+   example_data-fit.dat saved.
+   example_data-fit.png saved.
+   ```
 
 5. Exit.
 
@@ -115,7 +113,7 @@ restricted to Lorentzian lines shapes.
   
 ## Parameter file
 
-Below is sample parameter file with all necessary information. Important are the 
+Below is a sample parameter file with all necessary information. Important are the 
 name (and location) of the file that contains MB data (`MB-data = example_data.dat`) 
 and start parameters for the fit. The term `MB-data = ` must not be changed.
 
@@ -220,7 +218,7 @@ parameters so that they roughly reflect the shape of the measured data.
 > recognized by the fitting procedure, but is less important. The **ratio** is only for 
 > orientation and is ignored as a start parameter for the fit.
 
-<img src='examples\pre-fit.png' alt='Pre-fit'>
+<img src='examples\pre-fit.png' alt='Pre-fit' width=600 align='center'>
 
 ## Adjustment sliders and check (fix) buttons
 
@@ -229,7 +227,7 @@ splitting), **fwhm** (full width at half maximum), and **ratio** (ratio of the s
 component). For the fit, the start value for **ratio** is always set to 0.1 regardless 
 of the slider value. Changing the **ratio** is therefore only for orientation.     
 
-Three parameters can be fixed at a certain value with the check buttons **fix $δ$**, fix 
+Three parameters can be fixed at a certain value with the check buttons **fix $δ$**, 
 **fix $ΔE_Q$**, and **fix fwhm**. Fixed values are not changed during fit.      
 
 Select the species/component in the **legend** of the diagram at the top and change the 
@@ -242,11 +240,11 @@ parameters for each component individually.
 > If **$ΔE_Q$** is zero or close to zero and the fit fails, **$ΔE_Q$** should be 
 > **fixed** around **0**. In a subsequent fit, this **fix** can often be removed.     
 
-<img src='examples\sliders.png' alt='Sliders' class='custom-image'>
+<img src='examples\sliders.png' alt='Sliders' width=600 align='center'>
 
 ## Curve fitting
 
-After clicking on the **Fit button**, (raw) data, the fitted curves for each component 
+After clicking on the **Fit button**, (raw) data, the fitted curves for each component, 
 the resulting curve and the residuals are displayed in the lover area of the plot window.
 
 The **ratio** of the components (in %),  **$δ$** and **$ΔE_Q$** (in mm/s) and **$R^2$** 
@@ -261,7 +259,7 @@ and the **Fit** should be restarted.
 > If a fit fails or is poor, try changing the number of species 
 > (components), **$δ$**, **$ΔE_Q$** and **fwhm** in that order. 
 
-<img src='examples\fit-detail.png' alt='Fit detail'>
+<img src='examples\fit-detail.png' alt='Fit detail' width=600 align='center'>
 
 The terminal provides a more detailed fit report.
 
@@ -290,7 +288,7 @@ y0          : 0.9995±0.0001             ⇦ y0±error (offset)
                                                                   area          inegral 
 ```
 
-> A good fit result has a **$R²$** close to **1** (> 0.98) and a **χ²** below 1e$^{-3}$ 
+> A good fit result has a **$R²$** close to **1** (> 0.98) and a **χ²** below 1e⁻³ 
 > or less. But this strongly depends on the quality of the measured data. 
 
 **χ²** from `lmfit`:   
@@ -300,7 +298,7 @@ $$\chi^2 = \sum_{i}^N [\rm Residuals_i]^2$$
 $$\chi^2_\nu = \chi^2 / (N-N_{\rm varys})$$   
 $N$ is the number of data points and $N_{varys}$ is number of variable parameters.    
 
-$\mathbf{R²}$: coefficient of determination from `lmfit`
+ **$R²$**: coefficient of determination from `lmfit`
 
 Data points in **1σ** or **3σ** are optional (set `print_in_sigma = True` in the script).
 
@@ -324,7 +322,7 @@ data_filename-fit.dat                ⇦ a file that contains all data from fit 
 data_filename-fit.png                ⇦ exactly the plot (as PNG) in the lower window
 ```
 
-In case of the **parameter file** `-fit` is added to the filename of the parameter-file. 
+In case of the **parameter file** `-fit` is added to the filename of the new parameter-file. 
 The filename (without extension) of the file that contains the measured data is the prefix
 for the **report**, **data** and **plot** files. `-fit` is added to the prefix in case of
 the latter two files.
