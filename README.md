@@ -1,11 +1,3 @@
-<style>
-.custom-image {
-  width: 800px;
-  height: auto;
-}
-</style>
-
-
 # Fit-MB
 
 A Python 3 script for (hassle-free) fitting Mößbauer (MB) spectra. 
@@ -67,13 +59,13 @@ restricted to Lorentzian lines shapes.
     > You can also try to fit the data without adjusting any parameters. Simply click 
     > **Fit**. In this example no alteration of the start parameters was necessary.
     
-    <img src='start-mod.png' alt='Start' class='custom-image'>
+    <img src='examples\start-mod.png' alt='Start'>
 
 3. The result of the fit is displayed in the lower area, parameters and statistics are 
    also displayed in the terminal (console, cmd, std.out). Check if the results are okay. 
    Otherwise adjust the **sliders**  and click the **Fit button** again.
    
-    <img src='fit.png' alt='Fit' class='custom-image'>
+    <img src='examples\fit.png' alt='Fit'>
     
     Terminal output:
    
@@ -228,7 +220,7 @@ parameters so that they roughly reflect the shape of the measured data.
 > recognized by the fitting procedure, but is less important. The **ratio** is only for 
 > orientation and is ignored as a start parameter for the fit.
 
-<img src='pre-fit.png' alt='Pre-fit' class='custom-image'>
+<img src='examples\pre-fit.png' alt='Pre-fit'>
 
 ## Adjustment sliders and check (fix) buttons
 
@@ -250,7 +242,7 @@ parameters for each component individually.
 > If **$ΔE_Q$** is zero or close to zero and the fit fails, **$ΔE_Q$** should be 
 > **fixed** around **0**. In a subsequent fit, this **fix** can often be removed.     
 
-<img src='sliders.png' alt='Sliders' class='custom-image'>
+<img src='examples\sliders.png' alt='Sliders' class='custom-image'>
 
 ## Curve fitting
 
@@ -269,7 +261,7 @@ and the **Fit** should be restarted.
 > If a fit fails or is poor, try changing the number of species 
 > (components), **$δ$**, **$ΔE_Q$** and **fwhm** in that order. 
 
-<img src='fit-detail.png' alt='Fit detail' class='custom-image'>
+<img src='examples\fit-detail.png' alt='Fit detail'>
 
 The terminal provides a more detailed fit report.
 
