@@ -356,5 +356,4 @@ To the `residuals` some extra in `y` is added to display them above data and fit
 ## Exit
 
 To exit the script, klick on the **Exit button** or close the `matplotlib` window.
-# fit-mb
-Python 3 script for (hassle-free) fitting Mößbauer (MB) spectra
+
