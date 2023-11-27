@@ -1,0 +1,57 @@
+#==============================================================================
+# Example of a MB parameter file for fit-mb.py
+#==============================================================================
+# This is a comment.
+# Lines starting with '#' are ignored by the script.
+#
+# The MB (raw) data file should contain 'velocity' (1st column) and 
+# 'intensity' (2nd column). Further columns and lines starting 
+# with '#' are ignored. Recognized delimiters are ',' or ' ' (whitespace(s)).
+# The term 'MB-data = ' must not be changed since it is recognized by
+# the script. 
+#
+MB-data = example_data.dat
+#
+# The start parameters for the fit must be entered in the following order:
+#
+# label_1 δ_1 ΔEQ_1 fwhm_1 ratio_1
+# label_2 δ_2 ΔEQ_2 fwhm_2 ratio_2
+# label_3 δ_3 ΔEQ_3 fwhm_3 ratio_3
+# ...
+# 
+# label =  unique atom / compound name
+# δ     =  isomeric shift in mm/s
+# ΔEQ   =  quadrupole splitting in mm/s; should be positive
+# fwhm  =  full width at half maximum; line width for broadening
+# ratio =  ratio of the MB active compound / nucleus
+#
+# At least one species with label, δ, ΔEQ must be defined.
+# The labeling must be unique (e.g. 'Fe1', 'Fe2', ...). Identical labels
+# (e.g. 'Fe1', 'Fe1', ...) lead to errors. Labels should be without
+# spaces (e.g. 'LFe1' or 'LFe_1' instead of 'LFe 1').
+#
+# 'fwhm' and 'ratio' are optional. If there is no value for 'fwhm', 
+# but there is a value for 'ratio', 'ratio' is considered to be 'fwhm', 
+# because the third parameter in the line is assumed to be 'fwhm'.
+# 
+# If 'fwhm' is not specified it is set to 0.1. If 'fwhm' is not specified 
+# then 'ratio' cannot be specified (see above remark).
+# 
+# If 'ratio' is not specified it is set to 0.1.
+# Defining a ratio different from 1 or 100% can be useful if there is 
+# a main component and an impurity which is also MB active
+# or a mixture of two or more compounds with MB active nuclei. 
+# However, setting a 'ratio' as start parameter is just for orientation,
+# since the fit starts with a fixed value.
+#
+#----------------------------------------
+# label |   δ    |  ΔEQ  | fwhm  | ratio
+#----------------------------------------
+#L1Fe      0.24    1.51    0.33    0.40
+#L2Fe      0.25    3.12    0.39    0.35
+#L3Fe     -0.03    1.24    0.44    0.12
+#L4Fe     -0.06    0.61    0.37    0.13
+L1Fe       0.264   2.321   0.434   0.492
+L2Fe       0.279   1.551   0.427   0.508
+
+
