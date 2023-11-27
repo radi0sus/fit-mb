@@ -59,13 +59,13 @@ restricted to Lorentzian lines shapes.
     > You can also try to fit the data without adjusting any parameters. Simply click 
     > **Fit**. In this example no alteration of the start parameters was necessary.
     
-    <img src='examples\start-mod.png' alt='Start'>
+<img src='examples\start-mod.png' alt='Start'>
 
 3. The result of the fit is displayed in the lower area, parameters and statistics are 
    also displayed in the terminal (console, cmd, std.out). Check if the results are okay. 
    Otherwise adjust the **sliders**  and click the **Fit button** again.
    
-    <img src='examples\fit.png' alt='Fit'>
+<img src='examples\fit.png' alt='Fit'>
     
     Terminal output:
    
