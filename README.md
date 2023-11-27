@@ -19,12 +19,12 @@ restricted to Lorentzian lines shapes.
 1. Edit or create a parameter file (e.g. `mb-param.text`) with a text editor:
 
     ```
-    ...
+    #...
     #
     MB-data = example_data.dat
     # 
     # ⇦ just a comment
-    ...
+    #...
     #----------------------------------------
     # label |   δ    |  ΔEQ  | fwhm  | ratio
     #----------------------------------------
