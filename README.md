@@ -31,7 +31,7 @@ restricted to Lorentzian lines shapes.
     #
     MB-data = example_data.dat
     # 
-    # ← just a comment
+    # ⇦ just a comment
     ...
     #----------------------------------------
     # label |   δ    |  ΔEQ  | fwhm  | ratio
@@ -301,10 +301,14 @@ y0          : 0.9995±0.0001             ⇦ y0±error (offset)
 > A good fit result has a **$R²$** close to **1** (> 0.98) and a **χ²** below 1e$^{-3}$ 
 > or less. But this strongly depends on the quality of the measured data. 
 
-**χ²:**    $\`\chi^2 = \sum_i^N [{\rm Residuals}_i]^2\`$  from `lmfit`    
-**red. χ²:** $\chi^2_\nu &=& \chi^2 / (N-N_{\rm varys})$ from `lmfit`    
+**χ²** from `lmfit`:   
+$$\chi^2 = \sum_{i}^N [\rm Residuals_i]^2$$  
+   
+**red. χ²** from `lmfit` 
+$$\chi^2_\nu = \chi^2 / (N-N_{\rm varys})$$   
 $N$ is the number of data points and $N_{varys}$ is number of variable parameters.    
-**$R²$:** coefficient of determination from `lmfit`
+
+$\mathbf{R²}$: coefficient of determination from `lmfit`
 
 Data points in **1σ** or **3σ** are optional (set `print_in_sigma = True` in the script).
 
