@@ -64,7 +64,9 @@ restricted to Lorentzian lines shapes.
 3. The result of the fit is displayed in the lower area, parameters and statistics are 
    also displayed in the terminal (console, cmd, std.out). Check if the results are okay. 
    Otherwise adjust the **sliders**  and click the **Fit button** again.
-   <img src='examples\fit.png' alt='Fit' width=600 align='center'>    
+   
+   <img src='examples\fit.png' alt='Fit' width=600 align='center'>   
+ 
    Terminal output:
    
    ```
@@ -89,7 +91,7 @@ restricted to Lorentzian lines shapes.
    |      L2Fe | -0.170±0.002 |   2.240±0.003 |    0.519±0.006 |   79.74±0.93 |       80.15 |
    ```
 
-4. Finally save the results by clicking on the **Save** button. The optimized parameters 
+5. Finally save the results by clicking on the **Save** button. The optimized parameters 
    will be saved in `mb-param-fit.txt`, a fit report in `example_data-report.txt` 
    (same as the last console output), raw data and the fitted curves in
    `example_data-fit.dat` (a file which you can open in Gnuplot, Excel or Origin 
@@ -104,7 +106,7 @@ restricted to Lorentzian lines shapes.
    example_data-fit.png saved.
    ```
 
-5. Exit.
+6. Exit.
 
 ## Command-line options
 
