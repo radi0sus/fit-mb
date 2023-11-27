@@ -245,7 +245,7 @@ parameters for each component individually.
 ## Curve fitting
 
 After clicking on the **Fit button**, (raw) data, the fitted curves for each component, 
-the resulting curve and the residuals are displayed in the lover area of the plot window.
+the resulting curve and the residuals are displayed in the lower area of the plot window.
 
 The **ratio** of the components (in %),  **$δ$** and **$ΔE_Q$** (in mm/s) and **$R^2$** 
 are given in the legend. 
