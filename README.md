@@ -285,7 +285,7 @@ y0          : 0.9995±0.0001             ⇦ y0±error (offset)
 |      L2Fe | -0.170±0.002 |   2.240±0.003 |    0.519±0.006 |   79.74±0.93 |       80.15 |
       ⇧             ⇧               ⇧                ⇧               ⇧              ⇧
     label        δ±error       ΔEQ±error         fwhm±error     ratio from      ratio from  
-                                                                  area          inegral 
+                                                                  area          integral 
 ```
 
 > A good fit result has a **$R²$** close to **1** (> 0.98) and a **χ²** below 1e⁻³ 
