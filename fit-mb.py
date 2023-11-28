@@ -882,7 +882,7 @@ def save_csv(file):
     #transpose array, to get it in the right format
     xylist= np.array(xy_data).T.tolist()
     try:
-        #write the csv file (it sould look nice)
+        #write the csv file (it should look nice)
         with open(csv_filename, 'w') as output_file:
             output_file.write('{: <12}'.format('#velocity') + '{: <11}'.format('data')  + 
                                '{: <11}'.format('residuals') + 
