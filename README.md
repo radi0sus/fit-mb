@@ -1,6 +1,6 @@
 # Fit-MB
 
-A Python 3 script for (hassle-free) fitting Mößbauer (MB) spectra. 
+A Python 3 script for (hassle-free) fitting of Mößbauer (MB) spectra. 
 
 It is easy to use but has some limitations. The script is limited to doublets 
 (with no intensity differences) and singlets, cannot handle magnetic properties and is 
