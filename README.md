@@ -11,6 +11,7 @@ restricted to Lorentzian lines shapes.
 
 `lmfit`
 `numpy` 
+`scipy` 
 `matplotlib`
 `tabulate`
 
