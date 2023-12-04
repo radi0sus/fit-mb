@@ -37,6 +37,29 @@ restricted to Lorentzian lines shapes.
     First column should contain velocity, second intensity. Recognized delimiters 
     are `,` or space(s).
 
+    The script can also process WissEl data (`.ws5`) directly. Three additional parameters
+    from a calibration (folding point: `FP`, channel in which the velocity is zero: `v0`,
+    and maximum velocity: `vmax` must be included in the parameter file. It is also necessary
+    to change the number of channels directly in the script under `N_chan`, if the number
+    of channels is different from 512.
+
+    ```
+    #...
+    #
+    MB-data = example_data.dat
+    FP = 256.621
+    v0 = 125.282
+    vmax = -4.2622 
+    # 
+    # ⇦ just a comment
+    #...
+    #----------------------------------------
+    # label |   δ    |  ΔEQ  | fwhm  | ratio
+    #----------------------------------------
+    L1Fe      -0.12    2.92    
+    L2Fe      -0.09    2.21   
+    # adjust    ⇧       ⇧
+    ```
     The number of labels (e.g. `L1Fe`) is equivalent to the number of MB active species. 
     Furthermore rough estimates of $δ$ (isomer shift) and $ΔE_Q$ (quadrupol splitting) 
     are required.
@@ -45,7 +68,7 @@ restricted to Lorentzian lines shapes.
     > in the parameter file (e.g. `mb-param.text`) and restart the script as described
     > under **2**.
 
-2. Start the script with:
+3. Start the script with:
 
     ```console
     python3 mb-fit.py mb-param.txt
@@ -94,20 +117,24 @@ restricted to Lorentzian lines shapes.
 
 5. Finally save the results by clicking on the **Save** button. The optimized parameters 
    will be saved in `mb-param-fit.txt`, a fit report in `example_data-report.txt` 
-   (same as the last console output), raw data and the fitted curves in
+   (similar to the last console output), raw data and the fitted curves in
    `example_data-fit.dat` (a file which you can open in Gnuplot, Excel or Origin 
    for example) and the content of the lower plot area in `example_data-fit.png`.
 <img src='examples\fit.png' alt='Fit' width=600 align='center'>    
    Terminal output:
-   
+
    ```
    mb-param-fit.txt saved.
    example_data-report.txt saved.
    example_data-fit.dat saved.
    example_data-fit.png saved.
    ```
+   In the case of WissEl data, the folded spectrum is also saved (same output as above, plus):
+   ```
+   example_data-fold.dat saved.
+   ```  
 
-6. Exit.
+7. Exit.
 
 ## Command-line options
 
@@ -136,12 +163,19 @@ something has changed in the parameter file, the script must be restarted.
 # Lines starting with '#' are ignored by the script.
 #
 # The MB (raw) data file should contain 'velocity' (1st column) and 
-# 'intensity' (2nd column). Further columns and lines starting 
-# with '#' are ignored. Recognized delimiters are ',' or ' ' (whitespace(s)).
-# The term 'MB-data = ' must not be changed since it is recognized by
-# the script. 
+# 'intensity' (2nd column). Further columns and lines starting with '#' 
+# are ignored. Recognized delimiters are ',' or ' ' (whitespace(s)).
+# WissEl files '.ws5' are also accepted. 
+# For WissEl '.ws5' files, 'FP' (folding pint), v0 (channel in which 
+# the velocity is zero) and vmax (maximum velocity) must also be specified.
+#
+# The terms 'MB-data = ', FP =  ', 'v0 = ', and 'vmax = ' must not 
+# be changed since they are recognized by the script. 
 #
 MB-data = example_data.dat
+FP = 256.621
+v0 = 125.282
+vmax = -4.2622 
 #
 # The start parameters for the fit must be entered in the following order:
 #
@@ -184,12 +218,11 @@ MB-data = example_data.dat
 #L4Fe     -0.06    0.61    0.37    0.13
 L1Fe       0.264   2.321   0.434   0.492
 L2Fe       0.279   1.551   0.427   0.508
-L3Fe       1.334   1.922   0.561   0.203
 ```
 
 ## MB data file
 
-Below is sample data file. Lines starting with `#` are ignored. Only the first two 
+Below is a sample data file. Lines starting with `#` are ignored. Only the first two 
 columns are considered. The first column must contain the velocity, the second column
 must contain the intensity data. Recognized delimiters are `,` and spaces.
 
@@ -206,6 +239,25 @@ must contain the intensity data. Recognized delimiters are `,` and spaces.
  -4.4789,   586907.1,       4
  -4.4421,   587216.4,       5
  -4.4052,   586408.4,       6
+....
+```
+
+## WissEl ws5 file
+
+Below is a sample WissEl ws5 file. Lines starting with `<` are ignored. It is necessary 
+to change the number of channels directly in the script under `N_chan`, if the number of 
+channels is different from 512.
+
+```
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<wissoft version="1.1">
+<comment>http://www.wissel-gmbh.de</comment>
+<data channels="512" time="0">
+132130
+132207
+131879
+132294
+132142
 ....
 ```
 
@@ -323,12 +375,14 @@ parameterfile-fit.txt                ⇦ new parameter file with fitted paramete
 data_filename-report.txt             ⇦ fit report; exactly the last terminal output
 data_filename-fit.dat                ⇦ a file that contains all data from fit and raw data
 data_filename-fit.png                ⇦ exactly the plot (as PNG) in the lower window
+data_filename-folded.dat             ⇦ folded spectrum (only if a WissEl ws5 file has been processed)
 ```
 
 In case of the **parameter file** `-fit` is added to the filename of the new parameter-file. 
 The filename (without extension) of the file that contains the measured data is the prefix
 for the **report**, **data** and **plot** files. `-fit` is added to the prefix in case of
-the latter two files.
+the latter two files. The **folded** spectrum is saved, if if a WissEl ws5 file has been processed 
+(`-fold` is added to the filename).
 
 The file `data_filename-fit.dat` contains the following data:
 
