@@ -39,7 +39,7 @@ restricted to Lorentzian lines shapes.
 
     The script can also process WissEl data (`.ws5`) directly. Three additional parameters
     from a calibration (folding point: `FP`, channel in which the velocity is zero: `v0`,
-    and maximum velocity: `vmax` must be included in the parameter file. It is also necessary
+    and maximum velocity: `vmax`) must be included in the parameter file. It is also necessary
     to change the number of channels directly in the script under `N_chan`, if the number
     of channels is different from 512.
 
