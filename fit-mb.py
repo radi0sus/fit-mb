@@ -80,7 +80,7 @@ def ws5_2_data(N_chan,ws5list,FP,v0,vmax):
     #vmax    = maximum velocity
     #
     #to add to left hand side (lhs) channels 
-    #'(FP - 265.5)*2' for 512 channels
+    #'(FP - 256.5)*2' for 512 channels, if channel 1 is 1 (and not zero)
     folding_diff = (FP - (int(N_chan/2)+0.5))*2
     #calc velocity per channel from vmax
     chan_lhs = np.linspace(1, int(N_chan/2), int(N_chan/2))
