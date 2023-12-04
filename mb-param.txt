@@ -5,12 +5,19 @@
 # Lines starting with '#' are ignored by the script.
 #
 # The MB (raw) data file should contain 'velocity' (1st column) and 
-# 'intensity' (2nd column). Further columns and lines starting 
-# with '#' are ignored. Recognized delimiters are ',' or ' ' (whitespace(s)).
-# The term 'MB-data = ' must not be changed since it is recognized by
-# the script. 
+# 'intensity' (2nd column). Further columns and lines starting with '#' 
+# are ignored. Recognized delimiters are ',' or ' ' (whitespace(s)).
+# WissEl files '.ws5' are also accepted. 
+# For WissEl '.ws5' files, 'FP' (folding pint), v0 (channel in which 
+# the velocity is zero) and vmax (maximum velocity) must also be specified.
+#
+# The terms 'MB-data = ', FP =  ', 'v0 = ', and 'vmax = ' must not 
+# be changed since they are recognized by the script. 
 #
 MB-data = example_data.dat
+FP = 256.621
+v0 = 125.282
+vmax = -4.2622 
 #
 # The start parameters for the fit must be entered in the following order:
 #
@@ -52,5 +59,6 @@ MB-data = example_data.dat
 #L3Fe     -0.03    1.24    0.44    0.12
 #L4Fe     -0.06    0.61    0.37    0.13
 L1Fe       0.264   2.321   0.434   0.492
-L2Fe       0.279   1.551   0.427   0.508
+L2Fe       0.279   1.551   0.427   0.508
+
 
