@@ -166,8 +166,8 @@ something has changed in the parameter file, the script must be restarted.
 # 'intensity' (2nd column). Further columns and lines starting with '#' 
 # are ignored. Recognized delimiters are ',' or ' ' (whitespace(s)).
 # WissEl files '.ws5' are also accepted. 
-# For WissEl '.ws5' files, 'FP' (folding pint), v0 (channel in which 
-# the velocity is zero) and vmax (maximum velocity) must also be specified.
+# For WissEl '.ws5' files, 'FP' (folding pint), 'v0' (channel in which 
+# the velocity is zero) and 'vmax' (maximum velocity) must also be specified.
 #
 # The terms 'MB-data = ', FP =  ', 'v0 = ', and 'vmax = ' must not 
 # be changed since they are recognized by the script. 
