@@ -375,7 +375,7 @@ parameterfile-fit.txt                ⇦ new parameter file with fitted paramete
 data_filename-report.txt             ⇦ fit report; exactly the last terminal output
 data_filename-fit.dat                ⇦ a file that contains all data from fit and raw data
 data_filename-fit.png                ⇦ exactly the plot (as PNG) in the lower window
-data_filename-folded.dat             ⇦ folded spectrum (only if a WissEl ws5 file has been processed)
+data_filename-fold.dat               ⇦ folded spectrum (only if a WissEl ws5 file has been processed)
 ```
 
 In case of the **parameter file** `-fit` is added to the filename of the new parameter-file. 
