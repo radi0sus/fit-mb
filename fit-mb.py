@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 ##########################################################################################
-import sys                                                       #sys
-import os                                                        #os file processing
-import argparse                                                  #argument parser
-import matplotlib.pyplot as plt                                  #plots
-import numpy as np                                               #summation and other math
+import sys                               #sys
+import os                                #os file processing
+import argparse                          #argument parser
+import matplotlib.pyplot as plt          #plots
+import numpy as np                       #summation and other math
+from scipy import interpolate            #interpolation of channel intensities for folding
 
 from matplotlib.widgets import Slider, Button, RadioButtons, CheckButtons     #widgets
 from lmfit.models import LinearModel, Model                                   #fit
@@ -14,7 +15,9 @@ from lmfit import Parameters                                                  #f
 from tabulate import tabulate                                                 #nice tables
 ##########################################################################################
 print_in_sigma = False                                  #print data in 1 sigma and 3 sigma
-plot_3s_band   = False                                  #plot the 3 sigma band 
+plot_3s_band   = True                                   #plot the 3 sigma band 
+N_chan         = 512                                    #numer of channels of the device
+rmv_y_scaling  = True                                   #remove y scaling in outputs
 ##########################################################################################
 class text_colors: 
     #term colors
@@ -64,6 +67,42 @@ parser.add_argument('filename',
 
 #parse arguments
 args = parser.parse_args()
+
+##########################################################################################
+#import data from WissEl, fold spectrum and assign velocities to channels                #
+##########################################################################################
+def ws5_2_data(N_chan,ws5list,FP,v0,vmax):
+    #folding ws5 raw data
+    #N_chan  = total number of channels
+    #ws5list = (raw) intensity data from measurement, WissEl
+    #FP      = folding point
+    #v0      = channel with velocity = 0
+    #vmax    = maximum velocity
+    #
+    #to add to left hand side (lhs) channels 
+    #'(FP - 265.5)*2' for 512 channels
+    folding_diff = (FP - (int(N_chan/2)+0.5))*2
+    #calc velocity per channel from vmax
+    chan_lhs = np.linspace(1, int(N_chan/2), int(N_chan/2))
+    #velocity left hand side (lhs) should be the same as right hand side (rhs)
+    #so its only lhs
+    velocity_lhs = vmax - (vmax + vmax)/(N_chan/2-1)*(chan_lhs + (N_chan/2-1)/2 - v0)
+    #interpolate channels, to operate with channel floating point numbers (xxx.xx)
+    all_chan = np.linspace(1, int(N_chan), int(N_chan))
+    ws5_ichan = interpolate.interp1d(all_chan, ws5list, bounds_error=True, 
+         kind = 'linear')
+    #lhs channels (note that it goes from high to low)
+    lhs_chan = np.linspace(int(N_chan/2), 1, int(N_chan/2))
+    #rhs channels 
+    rhs_chan = np.linspace(int(N_chan/2) + 1, N_chan, int(N_chan/2))
+    #add the intensities of lhs + folding difference and rhs channels pairwise
+    folded_intens = (np.add(ws5_ichan(lhs_chan + folding_diff), ws5_ichan(rhs_chan)))
+    
+    x = velocity_lhs
+    y = folded_intens
+    #x = velocity lhs
+    #y = intensities = intensity lhs + intensity rhs
+    return x, y
     
 ##########################################################################################
 #import data & open parameter file                                                       #
@@ -75,6 +114,11 @@ def op_im(file):
     deltaeqlist = list()                     #list with Delta-EQ
     ratiolist = list()                       #list with ratios of several MB active nuclei
     fwhmlist = list()                        #list with individual fwhm 
+    #for saving the folded data start
+    x_raw = None                             #for WissEl data -> velocity, intensity
+    y_raw = None                             #for WissEl data -> velocity, intensity
+    FP = None; v0 = None; vmax = None        #for WissEl data -> velocity, intensity
+    #for saving the folded data end
     try:
         with open(file, 'r') as input_file:
             for line in input_file:
@@ -86,6 +130,18 @@ def op_im(file):
                         if line.startswith("MB-data"):
                             #expects the data file after 'MB-data = '
                             data_file=line.strip().split()[2]
+                        #Folding Point for WissEl raw ws5 data 
+                        elif line.startswith("FP"):
+                            #expects FP after 'FP = '
+                            FP=float(line.strip().split()[2])
+                        elif line.startswith("v0"):
+                        #v0 (channel with velocity = 0) for WissEl raw ws5 data 
+                            #expects v0 after 'v0 = '
+                            v0=float(line.strip().split()[2])
+                        elif line.startswith("vmax"):
+                        #vmax (maximum velocity) for WissEl raw ws5 data 
+                            #expects vmax after 'vmax = '
+                            vmax=float(line.strip().split()[2])   
                         else:
                             #add parameters to several lists
                             nucnamelist.append(line.strip().split()[0])
@@ -133,19 +189,41 @@ def op_im(file):
             y = data[:, 1]
         #wrong delimiter or strange data formats -> exit here
         except ValueError:
-            print('Warning! Numerical value expected or wrong delimiter in '
-                + '.dat file. Exit.')
-            sys.exit(1)
+        #try to read the file as ws5 (WissEl format)
+            try:
+                #read raw data into a list
+                ws5datlist = list()
+                with open(data_file, 'r') as input_file:
+                    for line in input_file:
+                        #if no '<' than its data
+                        if not line.startswith('<'):
+                            ws5datlist.append(float(line.strip()))
+                #WissEl raw data to velocity and intensity
+                #return x (velocity), y (intensity)
+                try:
+                    x, y = ws5_2_data(N_chan, ws5datlist, FP, v0, vmax)
+                    #will be later saved as folded data
+                    x_raw = x
+                    y_raw = y
+                except UnboundLocalError:
+                    print("Warning! In case of WissEL '.ws5' files, 'FP', 'v0', "
+                    + "and 'vmax' must be specified. Exit.")
+                    sys.exit(1)
+            except ValueError:
+                print('Warning! Numerical value expected or wrong delimiter in '
+                    + '.dat file. Exit.')
+                sys.exit(1)
     #no start values -> exit here
     if len(ishiftlist) == 0:
         print('Warning! At least one species with start values '
               + 'for δ and ΔEQ is excpected. Exit.')
         sys.exit(1)
-    return x, y, data_file, nucnamelist, ishiftlist, deltaeqlist, fwhmlist, ratiolist   
+    return x, y, x_raw, y_raw, data_file, nucnamelist, ishiftlist, deltaeqlist, \
+           fwhmlist, ratiolist, FP, v0, vmax   
 
 
-x, y, data_file, nucnamelist, ishiftlist, \
-      deltaeqlist, fwhmlist, ratiolist = op_im(args.filename)
+x, y, x_raw, y_raw, data_file, nucnamelist, ishiftlist, \
+deltaeqlist, fwhmlist, ratiolist, FP, v0, vmax = op_im(args.filename)
 
 #normalize y data
 y = normalize_y(y)
@@ -199,6 +277,7 @@ def do_the_fit():
     curve = np.sum(doublist) + bg
     #fit
     result = curve.fit(y,params + bg_params,x=x)
+    
     return result
 
 ##########################################################################################
@@ -217,9 +296,9 @@ def print_results(result):
     print('data points : ' + str(result.ndata))
     print('variables   : ' + str(result.nvarys))
     print('')
-    #χ² red. χ² or probably maybe not correct because of the definition of the function 
-    #and the format of the residuals?; not necessary for the evaluation of the 
-    #fit results, χ² gets smaller if the fit gets better
+    #χ² red. or χ² maybe not correct in relation to the error of the measurement 
+    #not necessary for the evaluation of the fit results,
+    #χ² gets smaller if the fit gets better
     #red. χ² from ORIGIN is exactly the same
     print('χ²          : ' + '{:.4e}'.format(result.chisqr))
     print('red. χ²     : ' + '{:.4e}'.format(result.redchi))
@@ -318,7 +397,6 @@ def print_results(result):
             stralign="decimal",
             tablefmt='github',
             showindex=False))
-        
         #printing was successful 
         print_results.results_printed = True
       
@@ -362,27 +440,32 @@ def plot_results(result, sum_amp, results_printed):
     #color list / cycle from the top
     ax1.set_prop_cycle(color = colors)
     
+    if rmv_y_scaling:
+        y_sc = y0
+    else:
+        y_sc = 1
+    
     #plot the (raw) data 
     ax1.plot(x, 
-            y,
+            y + (1 - y_sc),
             '.',
             color='steelblue')
     #plot the residuals + extra to get it above the other plots
     ax1.plot(x, 
-            result.residual + max(result.residual) + 1, 
+            result.residual + max(result.residual) + 1 + (1 - y_sc), 
             linestyle = (0, (1, 1)), 
             color='grey', 
             label='residuals')
     #plot the 'best fit'
     #the 'best fit' is the sum off all components (including y0)
     ax1.plot(x, 
-            result.best_fit,'-', 
+            result.best_fit + (1 - y_sc),'-', 
             color=best_fit_color, 
             label='best fit ' + '('+r'$R^2 =$ ' + '{:.4}'.format(result.rsquared)+')')
     #fill the area of the best fit
     ax1.fill_between(x, 
-            result.best_fit,
-            y0,
+            result.best_fit + (1 - y_sc),
+            y0 + (1-y_sc),
             color='steelblue',
             alpha=0.1)
             
@@ -399,7 +482,7 @@ def plot_results(result, sum_amp, results_printed):
         qsplit_key = 'd'+ str(index) + '_qsplit'
         if not component == 'bg_func' and results_printed == True:
             ax1.plot(x, 
-                    (y0 + comps[component]),
+                    (y0 + comps[component] + (1 - y_sc)),
                     label = nucnamelist[index] +
                     ' (' + '{:.1f}'.format(abs((result.uvars[area1_key])/sum_amp*100).n) + 
                     '%): ' +   '\n'                 
@@ -409,12 +492,12 @@ def plot_results(result, sum_amp, results_printed):
                     r' mm/s')
             #fill the area of the component plots
             ax1.fill_between(x, 
-                    y0 + (comps[component]), 
-                    y0, 
+                    y0 + (comps[component]) + (1-y_sc), 
+                    y0 + (1-y_sc), 
                     alpha=0.1)
         #in case the complete results have not been printed (see remarks above)
         elif not component == 'bg_func' and results_printed == False:
-            ax1.plot(x, (y0 + comps[component]),label = nucnamelist[index])
+            ax1.plot(x, (y0 + comps[component] + (1-y_sc)),label = nucnamelist[index])
     
     #plot a 3 sigma uncertainty band
     if results_printed == True and plot_3s_band == True:
@@ -427,7 +510,7 @@ def plot_results(result, sum_amp, results_printed):
             #don't plot the 3 sigma band if uncertainty (of Q.S.) is to high
             dely = result.eval_uncertainty(sigma=3)
             ax1.fill_between(x, 
-                result.best_fit - dely, result.best_fit + dely, 
+                result.best_fit - dely + (1-y_sc), result.best_fit + dely + (1-y_sc), 
                 color='grey', 
                 alpha=0.5,
                 label='3-$\sigma$ uncertainty band')
@@ -716,6 +799,10 @@ def callback_save(label):
         save_csv(data_file)
         #save the fit plot (ax1)
         save_plot(data_file)
+        #save folded data from WissEl ws5
+        #check existence of WissEl data
+        if hasattr(y_raw,'shape'):
+            save_folded(data_file)
     else:
         #no fit, no save
         print('"Fit" before "Save".')
@@ -776,6 +863,12 @@ def save_report(file, result, resultstable, sum_amp):
             report_file.write('# Fit report for ' + filename + '\n')
             report_file.write('## File statistics:' + '\n')
             report_file.write('MB data     : '  + data_file + '    \n')
+            if hasattr(y_raw,'shape'):##########
+                report_file.write('\n')
+                report_file.write('fold point  : ' + str(FP) + '    \n')
+                report_file.write('v₀ channel  : ' + str(v0) + '    \n')
+                report_file.write('vₘₐₓ         : ' + str(vmax) + ' mm/s \n')
+                report_file.write('\n')
             report_file.write('data points : ' + str(result.ndata) + '    \n')
             report_file.write('variables   : ' + str(result.nvarys) + '    \n')
             report_file.write('\n')
@@ -901,6 +994,27 @@ def save_csv(file):
         print("Write error. Exit.")
         sys.exit(1)
 
+def save_folded(file):
+    #save the folded data
+    #filename
+    filename, file_extension = os.path.splitext(file)
+    folded_filename = filename + '-fold.dat'
+    try:
+        #write folded data (it should look nice)
+        with open(folded_filename, 'w') as output_file:
+            output_file.write('#FP = ' + str(FP)  + '  v0 = ' + str(v0)  
+                              + '  vmax = ' + str(vmax)  +'\n')
+            output_file.write('{: <11}'.format('#velocity') + '{: <12}'.format('intensity')  + 
+                               '{: <11}'.format('channel') + '\n')
+            for index, raw_data_x in enumerate(x_raw):
+                output_file.write('{:.4f}'.format(raw_data_x) + '    ' 
+                + '{:.1f}'.format(y_raw[index]) + '    ' + str(index+1)+'\n') 
+        print(folded_filename + ' saved.')
+    #write error -> exit here
+    except IOError:
+        print("Write error. Exit.")
+        sys.exit(1)
+            
 ##########################################################################################
 #event handling, interaction with widgets                                                #
 ##########################################################################################
