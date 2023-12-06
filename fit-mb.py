@@ -2,22 +2,23 @@
 # -*- coding: utf-8 -*-
 
 ##########################################################################################
-import sys                               #sys
-import os                                #os file processing
-import argparse                          #argument parser
-import matplotlib.pyplot as plt          #plots
-import numpy as np                       #summation and other math
-from scipy import interpolate            #interpolation of channel intensities for folding
+import sys                                 #sys
+import os                                  #os file processing
+import argparse                            #argument parser
+import matplotlib.pyplot as plt            #plots
+import numpy as np                         #summation and other math
+from scipy import interpolate              #interpolation of channel intens. for folding
+from scipy.ndimage import uniform_filter1d #smoothed curve for raw data
 
 from matplotlib.widgets import Slider, Button, RadioButtons, CheckButtons     #widgets
-from lmfit.models import LinearModel, Model                                   #fit
+from lmfit.models import Model                                                #fit
 from lmfit import Parameters                                                  #fit
 from tabulate import tabulate                                                 #nice tables
 ##########################################################################################
 print_in_sigma = False                                  #print data in 1 sigma and 3 sigma
 plot_3s_band   = True                                   #plot the 3 sigma band 
 N_chan         = 512                                    #numer of channels of the device
-rmv_y_scaling  = True                                   #remove y scaling in outputs
+rmv_y_norm  = True                                      #remove y normalization in outputs
 ##########################################################################################
 class text_colors: 
     #term colors
@@ -440,32 +441,33 @@ def plot_results(result, sum_amp, results_printed):
     #color list / cycle from the top
     ax1.set_prop_cycle(color = colors)
     
-    if rmv_y_scaling:
-        y_sc = y0
+    #remove normalization if True
+    if rmv_y_norm:
+        y_nm = y0
     else:
-        y_sc = 1
+        y_nm = 1
     
     #plot the (raw) data 
     ax1.plot(x, 
-            y + (1 - y_sc),
+            y + (1 - y_nm),
             '.',
             color='steelblue')
     #plot the residuals + extra to get it above the other plots
     ax1.plot(x, 
-            result.residual + max(result.residual) + 1 + (1 - y_sc), 
+            result.residual + max(result.residual) + 1 + (1 - y_nm), 
             linestyle = (0, (1, 1)), 
             color='grey', 
             label='residuals')
     #plot the 'best fit'
     #the 'best fit' is the sum off all components (including y0)
     ax1.plot(x, 
-            result.best_fit + (1 - y_sc),'-', 
+            result.best_fit + (1 - y_nm),'-', 
             color=best_fit_color, 
             label='best fit ' + '('+r'$R^2 =$ ' + '{:.4}'.format(result.rsquared)+')')
     #fill the area of the best fit
     ax1.fill_between(x, 
-            result.best_fit + (1 - y_sc),
-            y0 + (1-y_sc),
+            result.best_fit + (1 - y_nm),
+            y0 + (1-y_nm),
             color='steelblue',
             alpha=0.1)
             
@@ -482,7 +484,7 @@ def plot_results(result, sum_amp, results_printed):
         qsplit_key = 'd'+ str(index) + '_qsplit'
         if not component == 'bg_func' and results_printed == True:
             ax1.plot(x, 
-                    (y0 + comps[component] + (1 - y_sc)),
+                    (y0 + comps[component] + (1 - y_nm)),
                     label = nucnamelist[index] +
                     ' (' + '{:.1f}'.format(abs((result.uvars[area1_key])/sum_amp*100).n) + 
                     '%): ' +   '\n'                 
@@ -492,12 +494,12 @@ def plot_results(result, sum_amp, results_printed):
                     r' mm/s')
             #fill the area of the component plots
             ax1.fill_between(x, 
-                    y0 + (comps[component]) + (1-y_sc), 
-                    y0 + (1-y_sc), 
+                    y0 + (comps[component]) + (1-y_nm), 
+                    y0 + (1-y_nm), 
                     alpha=0.1)
         #in case the complete results have not been printed (see remarks above)
         elif not component == 'bg_func' and results_printed == False:
-            ax1.plot(x, (y0 + comps[component] + (1-y_sc)),label = nucnamelist[index])
+            ax1.plot(x, (y0 + comps[component] + (1-y_nm)),label = nucnamelist[index])
     
     #plot a 3 sigma uncertainty band
     if results_printed == True and plot_3s_band == True:
@@ -510,7 +512,7 @@ def plot_results(result, sum_amp, results_printed):
             #don't plot the 3 sigma band if uncertainty (of Q.S.) is to high
             dely = result.eval_uncertainty(sigma=3)
             ax1.fill_between(x, 
-                result.best_fit - dely + (1-y_sc), result.best_fit + dely + (1-y_sc), 
+                result.best_fit - dely + (1-y_nm), result.best_fit + dely + (1-y_nm), 
                 color='grey', 
                 alpha=0.5,
                 label='3-$\sigma$ uncertainty band')
@@ -678,6 +680,14 @@ ax0.fill_between(x,
         1,
         color='steelblue',
         alpha=0.08)   
+
+#draw a smoothed curve for raw data
+y_smooth = uniform_filter1d(y, size=4)
+ax0.plot(x, 
+        y_smooth, 
+        '-',
+        color='steelblue',
+        alpha=0.5)
 
 #plot lorentz doublets/singlets from input values in ax0
 #y0 is assumed to be 1 before the fit
@@ -867,7 +877,7 @@ def save_report(file, result, resultstable, sum_amp):
                 report_file.write('\n')
                 report_file.write('fold point  : ' + str(FP) + '    \n')
                 report_file.write('v₀ channel  : ' + str(v0) + '    \n')
-                report_file.write('vₘₐₓ         : ' + str(vmax) + ' mm/s \n')
+                report_file.write('vₘₐₓ        : ' + str(vmax) + ' mm/s \n')
                 report_file.write('\n')
             report_file.write('data points : ' + str(result.ndata) + '    \n')
             report_file.write('variables   : ' + str(result.nvarys) + '    \n')
