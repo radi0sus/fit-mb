@@ -45,8 +45,8 @@ restricted to Lorentzian lines shapes.
 
     ```
     #...
-    #
-    MB-data = example_data.dat
+    # Note that FP, v0 and vmax must be specified. 
+    MB-data = example_data.ws5
     FP = 256.621
     v0 = 125.282
     vmax = -4.2622 
@@ -166,7 +166,7 @@ something has changed in the parameter file, the script must be restarted.
 # 'intensity' (2nd column). Further columns and lines starting with '#' 
 # are ignored. Recognized delimiters are ',' or ' ' (whitespace(s)).
 # WissEl files '.ws5' are also accepted. 
-# For WissEl '.ws5' files, 'FP' (folding pint), 'v0' (channel in which 
+# For WissEl '.ws5' files, 'FP' (folding point), 'v0' (channel in which 
 # the velocity is zero) and 'vmax' (maximum velocity) must also be specified.
 #
 # The terms 'MB-data = ', FP =  ', 'v0 = ', and 'vmax = ' must not 
