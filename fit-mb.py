@@ -18,7 +18,7 @@ from tabulate import tabulate                                                 #n
 print_in_sigma = False                                  #print data in 1 sigma and 3 sigma
 plot_3s_band   = True                                   #plot the 3 sigma band 
 N_chan         = 512                                    #numer of channels of the device
-rmv_y_norm  = True                                      #remove y normalization in outputs
+rmv_y_norm     = True                                   #remove y normalization in outputs
 ##########################################################################################
 class text_colors: 
     #term colors
@@ -118,7 +118,6 @@ def op_im(file):
     #for saving the folded data start
     x_raw = None                             #for WissEl data -> velocity, intensity
     y_raw = None                             #for WissEl data -> velocity, intensity
-    FP = None; v0 = None; vmax = None        #for WissEl data -> velocity, intensity
     #for saving the folded data end
     try:
         with open(file, 'r') as input_file:
@@ -188,6 +187,8 @@ def op_im(file):
             data = np.loadtxt(data_file)
             x = data[:, 0]
             y = data[:, 1]
+            #must be here to get "except ValueError:" in case of missing FP, v0, vmax
+            FP = None; v0 = None; vmax = None        #for WissEl data -> velocity, intensity
         #wrong delimiter or strange data formats -> exit here
         except ValueError:
         #try to read the file as ws5 (WissEl format)
