@@ -404,3 +404,10 @@ To the `residuals` some extra in `y` is added to display them above data and fit
 
 To exit the script, klick on the **Exit button** or close the `matplotlib` window.
 
+## Known Issues
+
+- If $ΔE_Q$ is 0 or close to 0, the fitting procedure has sometimes problems finding the correct solution.
+  In this case **fix $ΔE_Q$** at a value close to zero, **Fit**, remove **fix $ΔE_Q$** and **Fit** again.
+- If $ΔE_Q$ is 0 or close to 0, the error is very large. This results from the calculation of errors in
+  `lmfit`. There is no solution for this behaviour.
+
