@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 ##########################################################################################
-import sys                                 #sys
-import os                                  #os file processing
-import argparse                            #argument parser
-import matplotlib.pyplot as plt            #plots
-import numpy as np                         #summation and other math
-from scipy import interpolate              #interpolation of channel intens. for folding
-from scipy.ndimage import uniform_filter1d #smoothed curve for raw data
+import sys                                  #sys
+import os                                   #os file processing
+import argparse                             #argument parser
+import matplotlib.pyplot as plt             #plots
+import numpy as np                          #summation and other math
+from scipy import interpolate               #interpolation of channel intens. for folding
+from scipy.ndimage import uniform_filter1d  #smoothed curve for raw data
 
 from matplotlib.widgets import Slider, Button, RadioButtons, CheckButtons     #widgets
 from lmfit.models import Model                                                #fit
@@ -16,7 +16,7 @@ from lmfit import Parameters                                                  #f
 from tabulate import tabulate                                                 #nice tables
 ##########################################################################################
 print_in_sigma = False                                  #print data in 1 sigma and 3 sigma
-plot_3s_band   = True                                   #plot the 3 sigma band 
+plot_3s_band   = False                                  #plot the 3 sigma band 
 N_chan         = 512                                    #numer of channels of the device
 rmv_y_norm     = True                                   #remove y normalization in outputs
 ##########################################################################################
@@ -188,7 +188,7 @@ def op_im(file):
             x = data[:, 0]
             y = data[:, 1]
             #must be here to get "except ValueError:" in case of missing FP, v0, vmax
-            FP = None; v0 = None; vmax = None        #for WissEl data -> velocity, intensity
+            FP = None; v0 = None; vmax = None  #for WissEl data -> velocity, intensity
         #wrong delimiter or strange data formats -> exit here
         except ValueError:
         #try to read the file as ws5 (WissEl format)
@@ -342,7 +342,7 @@ def print_results(result):
             #calculate the ratio of each species and append to table with results 
             area1_key   = 'd'+ str(index) + '_area1'
             print_results.resultstable[index].append(u'{:.2fP}'.format(
-                                   abs(result.uvars[area1_key])/print_results.sum_amp*100))
+                                  abs(result.uvars[area1_key])/print_results.sum_amp*100))
         
         #calculate the ratio of MB active species from the are of the curves      
         #get fit results  
@@ -878,7 +878,7 @@ def save_report(file, result, resultstable, sum_amp):
                 report_file.write('\n')
                 report_file.write('fold point  : ' + str(FP) + '    \n')
                 report_file.write('v₀ channel  : ' + str(v0) + '    \n')
-                report_file.write('vₘₐₓ        : ' + str(vmax) + ' mm/s \n')
+                report_file.write('vₘₐₓ        : ' + str(vmax) + ' /mm·s⁻¹    \n')
                 report_file.write('\n')
             report_file.write('data points : ' + str(result.ndata) + '    \n')
             report_file.write('variables   : ' + str(result.nvarys) + '    \n')
