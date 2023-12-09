@@ -874,12 +874,14 @@ def save_report(file, result, resultstable, sum_amp):
             report_file.write('# Fit report for ' + filename + '\n')
             report_file.write('## File statistics:' + '\n')
             report_file.write('MB data     : '  + data_file + '    \n')
-            if hasattr(y_raw,'shape'):##########
+            #parameters for WissEl .ws5
+            if hasattr(y_raw,'shape'):
                 report_file.write('\n')
                 report_file.write('fold point  : ' + str(FP) + '    \n')
                 report_file.write('v₀ channel  : ' + str(v0) + '    \n')
-                report_file.write('vₘₐₓ        : ' + str(vmax) + ' /mm·s⁻¹    \n')
+                report_file.write('vₘₐₓ        : ' + str(vmax) + ' mm·s⁻¹    \n')
                 report_file.write('\n')
+            ###########################
             report_file.write('data points : ' + str(result.ndata) + '    \n')
             report_file.write('variables   : ' + str(result.nvarys) + '    \n')
             report_file.write('\n')
