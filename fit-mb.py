@@ -173,6 +173,8 @@ def op_im(file):
         data = np.loadtxt(data_file, delimiter=',')
         x = data[:, 0]
         y = data[:, 1]
+        #must be here to get "except ValueError:" in case of missing FP, v0, vmax
+        FP = None; v0 = None; vmax = None  #for WissEl data -> velocity, intensity
     #file not found -> exit here
     except IOError:
         print(f"'{data_file}'" + " not found")
