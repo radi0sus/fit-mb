@@ -324,19 +324,19 @@ The terminal provides a more detailed fit report.
 ```
 # Fit report for example_data
 ## File statistics: 
-MB data     : example_data.dat          ⇦ name of the file that contains the (raw) data
-data points : 256                       ⇦ number of data points
-variables   : 9                         ⇦ number of variables
+MB data     : example_data.dat     ⇦ name of the file that contains the (raw) data
+data points : 256                  ⇦ number of data points
+variables   : 9                    ⇦ number of variables
 
-mean σ data : 9.2035e-04                ⇦ in case of .ws5 data (`weights` for χ² and red. χ²)
-χ²          : 8.3411e-05                ⇦ Chi square(d); close to the numer of data in case of .ws5 
-red. χ²     : 3.3770e-07                ⇦ reduced Chi square(d); close to 1 in case of .ws5 
-R²          : 0.9952                    ⇦ R square(d)
+mean σ data : 9.2035e-04           ⇦ in case of .ws5 data (`weights` for χ² and red. χ²)
+χ²          : 8.3411e-05           ⇦ Chi square(d); close to the numer of data in case of .ws5 
+red. χ²     : 3.3770e-07           ⇦ reduced Chi square(d); close to 1 in case of .ws5 
+R²          : 0.9952               ⇦ R square(d)
 
 ## Fit results:
-data in 1σ  : 30                        ⇦ data points in 1σ (optional)
-data in 3σ  : 101                       ⇦ data points in 3σ (optional)
-y0          : 0.9995±0.0001             ⇦ y0±error (offset)
+data in 1σ  : 30                   ⇦ data points in 1σ (optional)
+data in 3σ  : 101                  ⇦ data points in 3σ (optional)
+y0          : 0.9995±0.0001        ⇦ y0±error (offset)
 
 |   species |    δ /mm·s⁻¹ |   ΔEQ /mm·s⁻¹ |   fwhm /mm·s⁻¹ |   r (area)/% |   r (int)/% |
 |-----------|--------------|---------------|----------------|--------------|-------------|
