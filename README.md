@@ -248,6 +248,9 @@ Below is a sample WissEl ws5 file. Lines starting with `<` are ignored. It is ne
 to change the number of channels directly in the script under `N_chan`, if the number of 
 channels is different from 512.
 
+> In principle any raw data (not only WissEl) can be processed, as long as `FP`,
+> `v0`, `vmax` are included in the parameter file.
+
 ```
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <wissoft version="1.1">
@@ -325,8 +328,9 @@ MB data     : example_data.dat          ⇦ name of the file that contains the (
 data points : 256                       ⇦ number of data points
 variables   : 9                         ⇦ number of variables
 
-χ²          : 8.3411e-05                ⇦ Chi square(d)
-red. χ²     : 3.3770e-07                ⇦ reduced Chi square(d)
+mean σ data : 9.2035e-04                ⇦ in case of .ws5 data (`weights` for χ² and red. χ²)
+χ²          : 8.3411e-05                ⇦ Chi square(d); close to the numer of data in case of .ws5 
+red. χ²     : 3.3770e-07                ⇦ reduced Chi square(d); close to 1 in case of .ws5 
 R²          : 0.9952                    ⇦ R square(d)
 
 ## Fit results:
@@ -344,16 +348,25 @@ y0          : 0.9995±0.0001             ⇦ y0±error (offset)
 ```
 
 > A good fit result has a **$R²$** close to **1** (> 0.98) and a **χ²** below 1e⁻³ 
-> or less. But this strongly depends on the quality of the measured data. 
+> or less. But this strongly depends on the quality of the measured data.
+
+> In case of unfolded data, uncertainties (standard deviations)
+> are calculated from the difference of the intensities from the left hand side and
+> the right hand side of the unfolded spectrum. **χ²** and **red. χ²** a are then weigthed by
+> the mean standard deviation (or square root of the mean variance of all data pairs).
+> **χ²** should be close to the number of data and **red. χ²** should be close to 1 for
+> a good fit result.
 
 **χ²** from `lmfit`:   
 $$\chi^2 = \sum_{i}^N [\rm Residuals_i]^2$$  
+(weighted in case of .ws5 files)
    
 **red. χ²** from `lmfit` 
 $$\chi^2_\nu = \chi^2 / (N-N_{\rm varys})$$   
 $N$ is the number of data points and $N_{varys}$ is number of variable parameters.    
+(weighted in case of .ws5 files)
 
- **$R²$**: coefficient of determination from `lmfit`
+ **$R²$**: coefficient of determination 
 
 Data points in **1σ** or **3σ** are optional (set `print_in_sigma = True` in the script).
 
