@@ -15,10 +15,11 @@ from lmfit.models import Model                                                #f
 from lmfit import Parameters                                                  #fit
 from tabulate import tabulate                                                 #nice tables
 ##########################################################################################
-print_in_sigma = False                                  #print data in 1 sigma and 3 sigma
-plot_3s_band   = False                                  #plot the 3 sigma band 
+print_in_sigma = True                                   #print data in 1 sigma and 3 sigma
+plot_3s_band   = True                                   #plot the 3 sigma band 
 N_chan         = 512                                    #numer of channels of the device
 rmv_y_norm     = True                                   #remove y normalization in outputs
+errbar_ws5     = True                                   #show error bars of folded data
 ##########################################################################################
 class text_colors: 
     #term colors
@@ -99,11 +100,28 @@ def ws5_2_data(N_chan,ws5list,FP,v0,vmax):
     #add the intensities of lhs + folding difference and rhs channels pairwise
     folded_intens = (np.add(ws5_ichan(lhs_chan + folding_diff), ws5_ichan(rhs_chan)))
     
+    #error from folding
+    #assuming that lhs intensity should be equal to rhs intensity
+    #since the sum of lhs intensity and rhs intensity is utilized, lhs and rhs intensity
+    #are doubled (*2)
+    lhs_i_2x = ws5_ichan(lhs_chan + folding_diff) * 2
+    rhs_i_2x = ws5_ichan(rhs_chan) * 2
+    #stddev for error bar plot in ax0
+    stdev_fold_i = np.std([lhs_i_2x, rhs_i_2x], axis = 0)
+    #normalized stddev
+    stdev_fold_i_norm = stdev_fold_i / max(folded_intens)
+    #mean stddev (one value) from sqrt of the mean of variances of 
+    #lhs and rhs intensity * 2
+    #the mean stddev is used as weight in the fit and for the residuals
+    mean_stdev_fold_i = np.sqrt(np.mean(np.var([lhs_i_2x, rhs_i_2x], axis = 0)))
+    #normalized mean stddev 
+    mean_stdev_fold_i_norm = mean_stdev_fold_i / max(folded_intens)
+    
     x = velocity_lhs
     y = folded_intens
     #x = velocity lhs
     #y = intensities = intensity lhs + intensity rhs
-    return x, y
+    return x, y , stdev_fold_i_norm, mean_stdev_fold_i_norm
     
 ##########################################################################################
 #import data & open parameter file                                                       #
@@ -118,6 +136,10 @@ def op_im(file):
     #for saving the folded data start
     x_raw = None                             #for WissEl data -> velocity, intensity
     y_raw = None                             #for WissEl data -> velocity, intensity
+    
+    stdev_fold_i_norm = None
+    mean_stdev_fold_i_norm = 1
+    
     #for saving the folded data end
     try:
         with open(file, 'r') as input_file:
@@ -205,7 +227,8 @@ def op_im(file):
                 #WissEl raw data to velocity and intensity
                 #return x (velocity), y (intensity)
                 try:
-                    x, y = ws5_2_data(N_chan, ws5datlist, FP, v0, vmax)
+                    x, y , stdev_fold_i_norm, mean_stdev_fold_i_norm = \
+                                              ws5_2_data(N_chan, ws5datlist, FP, v0, vmax)
                     #will be later saved as folded data
                     x_raw = x
                     y_raw = y
@@ -222,12 +245,12 @@ def op_im(file):
         print('Warning! At least one species with start values '
               + 'for δ and ΔEQ is excpected. Exit.')
         sys.exit(1)
-    return x, y, x_raw, y_raw, data_file, nucnamelist, ishiftlist, deltaeqlist, \
-           fwhmlist, ratiolist, FP, v0, vmax   
+    return x, y, stdev_fold_i_norm, mean_stdev_fold_i_norm, x_raw, y_raw, data_file, \
+           nucnamelist, ishiftlist, deltaeqlist, fwhmlist, ratiolist, FP, v0, vmax   
 
 
-x, y, x_raw, y_raw, data_file, nucnamelist, ishiftlist, \
-deltaeqlist, fwhmlist, ratiolist, FP, v0, vmax = op_im(args.filename)
+x, y, stdev_fold_i_norm, mean_stdev_fold_i_norm, x_raw, y_raw, data_file, nucnamelist, \
+ishiftlist, deltaeqlist, fwhmlist, ratiolist, FP, v0, vmax = op_im(args.filename)
 
 #normalize y data
 y = normalize_y(y)
@@ -279,9 +302,10 @@ def do_the_fit():
     bg_params = bg.make_params(y0 = {'value':1, 'min': 0.8, 'max':1.2, 'vary':True})
     #the final curve = all Lorentz doublets or singlets + bg
     curve = np.sum(doublist) + bg
-    #fit
-    result = curve.fit(y,params + bg_params,x=x)
-    
+    #fit, mean_stdev_fold_i_norm from ws5 folding, mean_stdev_fold_i_norm = 1 in case of
+    # .dat files
+    result = curve.fit(y, params + bg_params, x=x, weights = 1 / mean_stdev_fold_i_norm,\
+                       scale_covar=True)
     return result
 
 ##########################################################################################
@@ -292,6 +316,9 @@ def print_results(result):
     
     #list for the table of results   
     print_results.resultstable=list() 
+    
+    #R² is wrongly calculated from lmfit in case of weights <> 1
+    r_squared = 1 - (result.residual * mean_stdev_fold_i_norm).var() / np.var(y)
     
     print('')
     print('# Fit report for ' + filename)
@@ -304,10 +331,14 @@ def print_results(result):
     #not necessary for the evaluation of the fit results,
     #χ² gets smaller if the fit gets better
     #red. χ² from ORIGIN is exactly the same
+    if hasattr(y_raw,'shape'):
+        #mean stdev for all data used as 1/mean(stdev) for weights
+        print('mean σ data : ' + '{:.4e}'.format(mean_stdev_fold_i_norm))
     print('χ²          : ' + '{:.4e}'.format(result.chisqr))
     print('red. χ²     : ' + '{:.4e}'.format(result.redchi))
     #print('nfree   : ' + str(result.nfree))        #Number of free parameters in fit.
-    print('R²          : ' + '{:.4}'.format(result.rsquared))
+    #print('R²          : ' + '{:.4}'.format(result.rsquared)) # from lmfit (wrong with weights)
+    print('R²          : ' + '{:.4}'.format(r_squared))
     print('')
 
     try:
@@ -457,16 +488,20 @@ def plot_results(result, sum_amp, results_printed):
             color='steelblue')
     #plot the residuals + extra to get it above the other plots
     ax1.plot(x, 
-            result.residual + max(result.residual) + 1 + (1 - y_nm), 
+            (result.residual + max(result.residual)) * mean_stdev_fold_i_norm + 1 + (1 - y_nm), 
             linestyle = (0, (1, 1)), 
             color='grey', 
             label='residuals')
     #plot the 'best fit'
     #the 'best fit' is the sum off all components (including y0)
+    #R² is wrongly calculated from lmfit in case of weights <> 1
+    r_squared = 1 - (result.residual * mean_stdev_fold_i_norm).var() / np.var(y)
+    
     ax1.plot(x, 
             result.best_fit + (1 - y_nm),'-', 
             color=best_fit_color, 
-            label='best fit ' + '('+r'$R^2 =$ ' + '{:.4}'.format(result.rsquared)+')')
+            #label='best fit ' + '('+r'$R^2 =$ ' + '{:.4}'.format(result.rsquared)+')')
+            label='best fit ' + '('+r'$R^2 =$ ' + '{:.4}'.format(r_squared)+')')
     #fill the area of the best fit
     ax1.fill_between(x, 
             result.best_fit + (1 - y_nm),
@@ -691,6 +726,15 @@ ax0.plot(x,
         '-',
         color='steelblue',
         alpha=0.5)
+        
+if errbar_ws5 and np.any(stdev_fold_i_norm):
+    ax0.errorbar(x, 
+            y, 
+            yerr=stdev_fold_i_norm,
+            fmt='.',
+            capsize=1.5,
+            color='steelblue',
+            alpha=0.5)
 
 #plot lorentz doublets/singlets from input values in ax0
 #y0 is assumed to be 1 before the fit
@@ -870,6 +914,8 @@ def save_report(file, result, resultstable, sum_amp):
     #save the fit report
     #filename
     filename, file_extension = os.path.splitext(file)
+     #R² is wrongly calculated from lmfit in case of weights <> 1
+    r_squared = 1 - (result.residual * mean_stdev_fold_i_norm).var() / np.var(y)
     try:
         report_filename = filename + '-report.txt'
         with open(report_filename, 'w', encoding='utf-8') as report_file:
@@ -887,11 +933,18 @@ def save_report(file, result, resultstable, sum_amp):
             report_file.write('data points : ' + str(result.ndata) + '    \n')
             report_file.write('variables   : ' + str(result.nvarys) + '    \n')
             report_file.write('\n')
+            #parameters for WissEl .ws5; mean stdev for all data used as 1/mean(stdev) for
+            #weights
+            if hasattr(y_raw,'shape'):
+                report_file.write('mean σ data : ' + '{:.4e}'.format(mean_stdev_fold_i_norm) 
+                                                   + '    \n')
+            ###########################
             report_file.write('χ²          : ' + '{:.4e}'.format(result.chisqr) 
                                                + '    \n')
             report_file.write('red. χ²     : ' + '{:.4e}'.format(result.redchi) 
                                                + '    \n')
-            report_file.write('R²          : ' + '{:.4}'.format(result.rsquared) 
+            #report_file.write('R²          : ' + '{:.4}'.format(result.rsquared) 
+            report_file.write('R²          : ' + '{:.4}'.format(r_squared) 
                                                + '    \n')
             report_file.write('\n')
             report_file.write('## Fit results:' + '\n')
