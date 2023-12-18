@@ -356,8 +356,8 @@ y0          : 0.9995±0.0001        ⇦ y0±error (offset)
 > or less. But this strongly depends on the quality of the measured data.
 
 > In case of unfolded data, uncertainties (standard deviations)
-> are calculated from the difference of the intensities from the left hand side and
-> the right hand side of the unfolded spectrum. **χ²** and **red. χ²** a are then weigthed by
+> are calculated from the difference of the intensities from the left-hand side and
+> the right-hand side of the unfolded spectrum. **χ²** and **red. χ²** a are then weigthed by
 > the mean standard deviation (or square root of the mean variance of all data pairs).
 > **χ²** should be close to the number of data and **red. χ²** should be close to 1 for
 > a good fit result.
@@ -428,4 +428,18 @@ To exit the script, klick on the **Exit button** or close the `matplotlib` windo
   In this case **fix $ΔE_Q$** at a value close to zero, **Fit**, remove **fix $ΔE_Q$** and **Fit** again.
 - If $ΔE_Q$ is 0 or close to 0, the error is very large. This results from the calculation of errors in
   `lmfit`. There is no solution for this behaviour.
+
+## Remarks
+
+- The script is benchmarked against the `mfit` program from Dr. Eckhard Bill. Within the given restrictions, 
+  the results match down to the second decimal place.
+- χ² and red. χ² are rather meaningless in case of files that contain only velocity and intensity. However, if
+  the fit is good both values get smaller.
+- In case of unfolded data, the error can be estimated from the differences in the intensities of the left-hand
+  side and right-hand side sub-spectra. The weighting for χ² and red. χ² is 1 / (mean standard deviation). 
+  The mean standard deviation is the square root of the mean variance of two times the intensities of the left-hand
+  side and right-hand side data pairs which are supposed to be equal. χ² is close to the number of data points and
+  red. χ² is close to 1 in case of a good fit. All values are normalized. 
+- R-squared is calculated by 1 - variance(residual * mean standard deviation) / variance(intensities), because
+  R-squared is calculated wrongly by `lmfit` in case of weights.
 
