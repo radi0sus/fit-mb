@@ -41,7 +41,8 @@ restricted to Lorentzian lines shapes.
     from a calibration (folding point: `FP`, channel in which the velocity is zero: `v0`,
     and maximum velocity: `vmax`) must be included in the parameter file. It is also necessary
     to change the number of channels directly in the script under `N_chan`, if the number
-    of channels is different from 512.
+    of channels is different from 512. You can obtain these parameters with `mcal` or
+    [cal-mb](https://github.com/radi0sus/cal-mb), for example.
 
     ```
     #...
@@ -145,7 +146,11 @@ restricted to Lorentzian lines shapes.
 
 Below is a sample parameter file with all necessary information. Important are the 
 name (and location) of the file that contains MB data (`MB-data = example_data.dat`) 
-and start parameters for the fit. The term `MB-data = ` must not be changed.
+and start parameters for the fit. The term `MB-data = ` must not be changed. In case 
+of raw data from a multi-channel analyzer (WissEl .ws5 files for example), the terms 
+`FP = `, `v0 = ` and `vmax = ` must not be changed. You can obtain these parameters 
+from a calibration with `mcal` or [cal-mb](https://github.com/radi0sus/cal-mb), 
+for example.
 
 Only label, $δ$ and $ΔE_Q$ are essential and the labeling must be unique. Every time 
 something has changed in the parameter file, the script must be restarted.    
@@ -385,7 +390,7 @@ After clicking the **Save button** the following files are saved:
 
 ```
 parameterfile-fit.txt          ⇦ new parameter file with fitted parameters
-data_filename-report.txt       ⇦ fit report; exactly the last terminal output
+data_filename-report.txt       ⇦ fit report; similar to the last terminal output
 data_filename-fit.dat          ⇦ a file that contains all data from fit and raw data
 data_filename-fit.png          ⇦ exactly the plot (as PNG) in the lower window
 data_filename-fold.dat         ⇦ folded spectrum (only if a WissEl ws5 file has been processed)
