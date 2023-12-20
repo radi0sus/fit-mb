@@ -193,56 +193,41 @@ def op_im(file):
         print('Warning! Value in parameter file missing or unkown '
               + 'instruction or blank line. Exit.')
         sys.exit(1)
-    #import MB data with delimiter ','
     try:
-        data = np.loadtxt(data_file, delimiter=',')
+        #import MB data with delimiter ','
+        data = np.loadtxt(data_file, delimiter=',',  comments=['#','<'])
         x = data[:, 0]
         y = data[:, 1]
-        #must be here to get "except ValueError:" in case of missing FP, v0, vmax
-        FP = None; v0 = None; vmax = None  #for WissEl data -> velocity, intensity
-    #file not found -> exit here
+        FP = None; v0 = None; vmax = None #no raw data, these values are missing -> error
+    except IndexError:
+        #try to read the file as ws5 (WissEl format)
+        data = np.loadtxt(data_file, comments=['#','<'])
+        ws5datlist = list()
+        ws5datlist = data
+        try:
+            x, y , stdev_fold_i_norm, mean_stdev_fold_i_norm = \
+                                              ws5_2_data(N_chan, ws5datlist, FP, v0, vmax)
+            #will be later saved as folded data
+            x_raw = x
+            y_raw = y
+        except UnboundLocalError:
+            print("Warning! In case of WissEL '.ws5' files, 'FP', 'v0', "
+                  + "and 'vmax' must be specified. Exit.")
+            sys.exit(1)
     except IOError:
+        #file not found -> exit here
         print(f"'{data_file}'" + " not found")
         sys.exit(1)
-    #key word in parameter file missing -> exit here
     except NameError:
+        #missing "MB-data" -> exit here
         print(f'Warning! Missing "MB-data" line in "{args.filename}". Exit.')
         sys.exit(1)
-    #in case the delimiter is spaces instead of ','
     except ValueError:
-        try: 
-            data = np.loadtxt(data_file)
-            x = data[:, 0]
-            y = data[:, 1]
-            #must be here to get "except ValueError:" in case of missing FP, v0, vmax
-            FP = None; v0 = None; vmax = None  #for WissEl data -> velocity, intensity
-        #wrong delimiter or strange data formats -> exit here
-        except ValueError:
-        #try to read the file as ws5 (WissEl format)
-            try:
-                #read raw data into a list
-                ws5datlist = list()
-                with open(data_file, 'r') as input_file:
-                    for line in input_file:
-                        #if no '<' than its data
-                        if not line.startswith('<'):
-                            ws5datlist.append(float(line.strip()))
-                #WissEl raw data to velocity and intensity
-                #return x (velocity), y (intensity)
-                try:
-                    x, y , stdev_fold_i_norm, mean_stdev_fold_i_norm = \
-                                              ws5_2_data(N_chan, ws5datlist, FP, v0, vmax)
-                    #will be later saved as folded data
-                    x_raw = x
-                    y_raw = y
-                except UnboundLocalError:
-                    print("Warning! In case of WissEL '.ws5' files, 'FP', 'v0', "
-                    + "and 'vmax' must be specified. Exit.")
-                    sys.exit(1)
-            except ValueError:
-                print('Warning! Numerical value expected or wrong delimiter in '
-                    + '.dat file. Exit.')
-                sys.exit(1)
+         #import MB data with delimiter ' ' (space)
+        data = np.loadtxt(data_file, comments=['#','<'])
+        x = data[:, 0]
+        y = data[:, 1]
+        FP = None; v0 = None; vmax = None #no raw data, these values are missing -> error
     #no start values -> exit here
     if len(ishiftlist) == 0:
         print('Warning! At least one species with start values '
