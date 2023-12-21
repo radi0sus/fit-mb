@@ -428,11 +428,13 @@ To exit the script, klick on the **Exit button** or close the `matplotlib` windo
   In this case **fix $ΔE_Q$** at a value close to zero, **Fit**, remove **fix $ΔE_Q$** and **Fit** again.
 - If $ΔE_Q$ is 0 or close to 0, the error is very large. This results from the calculation of errors in
   `lmfit`. There is no solution for this behaviour.
+- The script has not been tested with raw data from 1024 channel multi-channel analyzers.
 
 ## Remarks
 
 - The script is benchmarked against the `mfit` program from Dr. Eckhard Bill. Within the given restrictions, 
   the results match down to the second decimal place.
+- Raw spectra (WissEl .ws5 for example) are expected to start at channel 1 and be folded to the right.
 - χ² and red. χ² are rather meaningless in case of files that contain only velocity and intensity. However, if
   the fit is good both values get smaller.
 - In case of unfolded data, the error can be estimated from the differences in the intensities of the left-hand
