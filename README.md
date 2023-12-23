@@ -275,7 +275,10 @@ The pre-fit plot is in the upper part of the `matplotlib` window. The active spe
 is selected in the **legend** of plot. The plot is updated if any of the parameters is 
 changed using the **sliders** at the bottom of the window. 
 The purpose of the pre-fit plot in combination with the **sliders** is to set the fitting 
-parameters so that they roughly reflect the shape of the measured data.
+parameters so that they roughly reflect the shape of the measured data.    
+
+If `errbar_ws5 = True` is set in the script, error bars are displayed for folded raw 
+data (e.g. WissEl .ws5).
 
 > The most important parameters to be changed are **$δ$** and **$ΔE_Q$**. **Fwhm** is 
 > recognized by the fitting procedure, but is less important. The **ratio** is only for 
