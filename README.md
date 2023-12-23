@@ -441,7 +441,9 @@ To exit the script, klick on the **Exit button** or close the `matplotlib` windo
   side and right-hand side sub-spectra. The weighting for χ² and red. χ² is 1 / (mean standard deviation). 
   The mean standard deviation is the square root of the mean variance of two times the intensities of the left-hand
   side and right-hand side data pairs which are supposed to be equal. χ² is close to the number of data points and
-  red. χ² is close to 1 in case of a good fit. All values are normalized. 
+  red. χ² is close to 1 in case of a good fit. All values are normalized.    
+  Please note that parameters like $δ$ or $ΔE_Q$ are mainly derived from channel or velocity data (x-values),
+  while only errors from transmission or intensity data (y-values) are taken into account for the weigths of χ² and red. χ².
 - R-squared is calculated by 1 - variance(residual * mean standard deviation) / variance(intensities), because
   R-squared is calculated wrongly by `lmfit` in case of weights.
 
