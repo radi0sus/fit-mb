@@ -435,8 +435,8 @@ To exit the script, klick on the **Exit button** or close the `matplotlib` windo
 
 ## Remarks
 
-- The script is benchmarked against the `mfit` program from Dr. Eckhard Bill. Within the given restrictions, 
-  the results match down to the second decimal place.
+- The script is benchmarked against the `mfit2` program from Dr. Eckhard Bill. Within the given restrictions, 
+  the results for  $δ$ and §ΔE_Q$ match down to the second decimal place. 
 - Raw spectra (WissEl .ws5 for example) are expected to start at channel 1 and be folded to the right.
 - χ² and red. χ² are rather meaningless in case of files that contain only velocity and intensity. However, if
   the fit is good both values get smaller.
@@ -447,6 +447,6 @@ To exit the script, klick on the **Exit button** or close the `matplotlib` windo
   red. χ² is close to 1 in case of a good fit. All values are normalized.    
   Please note that parameters like $δ$ or $ΔE_Q$ are mainly derived from channel or velocity data (x-values),
   while only errors from transmission or intensity data (y-values) are taken into account for the weigths of χ² and red. χ².
-- R-squared is calculated by 1 - variance(residual * mean standard deviation) / variance(intensities), because
-  R-squared is calculated wrongly by `lmfit` in case of weights.
+- R² is calculated by 1 - variance(residual * mean standard deviation) / variance(intensities), because
+  R² is calculated wrongly by `lmfit` in case of weights.
 
