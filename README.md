@@ -436,7 +436,7 @@ To exit the script, klick on the **Exit button** or close the `matplotlib` windo
 ## Remarks
 
 - The script is benchmarked against the `mfit2` program from Dr. Eckhard Bill. Within the given restrictions, 
-  the results for  $δ$ and §ΔE_Q$ match down to the second decimal place. 
+  the results for  $δ$ and $ΔE_Q$ match down to the second decimal place. 
 - Raw spectra (WissEl .ws5 for example) are expected to start at channel 1 and be folded to the right.
 - χ² and red. χ² are rather meaningless in case of files that contain only velocity and intensity. However, if
   the fit is good both values get smaller.
