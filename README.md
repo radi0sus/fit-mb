@@ -450,3 +450,6 @@ To exit the script, klick on the **Exit button** or close the `matplotlib` windo
 - R² is calculated by 1 - variance(residual * mean standard deviation) / variance(intensities), because
   R² is calculated wrongly by `lmfit` in case of weights.
 
+## Example
+
+<img src='examples\show-use.gif' alt='Show use' width=800 align='center'>
