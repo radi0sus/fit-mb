@@ -452,4 +452,4 @@ To exit the script, klick on the **Exit button** or close the `matplotlib` windo
 
 ## Example
 
-<img src='examples\show-use.gif' alt='Show use' width=800 align='center'>
+<img src='examples\show-use3.gif' alt='Show use' width=900 align='center'>
