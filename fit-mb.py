@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt             #plots
 import numpy as np                          #summation and other math
 from scipy import interpolate               #interpolation of channel intens. for folding
 from scipy.ndimage import uniform_filter1d  #smoothed curve for raw data
+from scipy.integrate import trapezoid 
 
 from matplotlib.widgets import Slider, Button, RadioButtons, CheckButtons     #widgets
 from lmfit.models import Model                                                #fit
@@ -378,14 +379,18 @@ def print_results(result):
         total_area = np.ptp(x)*y0
         #integration using the composite trapezoidal rule
         #data_area =  total_area - np.trapz(y,x,0.001)
-        fit_area =  total_area - np.trapz(result.best_fit,x,0.001)
+        #fit_area =  total_area - np.trapz(result.best_fit,x,0.001)
+        #np.trapz is deprecated, replaced with scipy.integrate.trapezoid
+        fit_area =  total_area - trapezoid(result.best_fit,x,0.001)
         #extract components (individual MB doublets for each species) from the fit results
         comps = result.eval_components(x=x)
         
         #calculate the ratio of each species
         for index,component in enumerate(comps):
             if not component == 'bg_func':
-                comp_area = total_area - np.trapz(y0 + comps[component],x,0.001)
+                #comp_area = total_area - np.trapz(y0 + comps[component],x,0.001)
+                #np.trapz is deprecated, replaced with scipy.integrate.trapezoid
+                comp_area = total_area - trapezoid(y0 + comps[component],x,0.001)
                 #append to table with results
                 print_results.resultstable[index].append('{:#.2f}'.format(
                                                                 comp_area/fit_area*100))
@@ -881,7 +886,8 @@ def save_plot(file):
         #the matplotlib window after saving the plot
         plSize = params.get_size_inches()
         #plot dimensions
-        params.set_size_inches(15*0.5,30*0.5)
+        #added 'False' to avoid Qt Error Warning under Windows
+        params.set_size_inches(15*0.5, 30*0.5, False)
         #plot title
         ax1.set_title(filename, fontsize='11')
         #plot lable
